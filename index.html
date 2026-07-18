@@ -41,12 +41,11 @@
             direction: ltr;
         }
 
-        /* Apple-Style Scrolling Pages */
         .page {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 130px; /* Space for floating dock */
+            padding-bottom: 120px; /* Space for the new floating Apple dock */
             display: none;
             width: 100%;
             animation: fadeIn 0.3s ease-in-out;
@@ -93,8 +92,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 0 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            padding: 0 5px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             z-index: 1000;
         }
 
@@ -110,7 +109,7 @@
             flex: 1;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             border-radius: 20px;
-            padding: 8px 0;
+            padding: 6px 0;
         }
 
         .tab-item.active {
@@ -119,7 +118,7 @@
         }
 
         .tab-icon {
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 4px;
             transition: transform 0.3s;
         }
@@ -128,59 +127,58 @@
             transform: translateY(-2px);
         }
 
-        /* Cards and UI Elements */
+        /* Core Elements */
         .header-bar {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--card-bg);
-            padding: 18px 22px;
+            padding: 15px 20px;
             border-radius: var(--radius-main);
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .coin-balance {
-            font-size: 52px;
+            font-size: 46px;
             font-weight: 800;
             margin: 20px 0;
             display: flex;
             align-items: center;
-            gap: 12px;
-            letter-spacing: -1.5px;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            gap: 10px;
+            letter-spacing: -1px;
         }
 
         .miner-btn {
-            width: 240px;
-            height: 240px;
-            background: linear-gradient(145deg, #0a84ff, #005bb5);
+            width: 230px;
+            height: 230px;
+            background: radial-gradient(circle, #2980b9 0%, #1f618d 100%);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 85px;
-            box-shadow: 0 20px 40px rgba(10, 132, 255, 0.3), inset 0 -10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(31, 97, 141, 0.4), inset 0 -8px 15px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: transform 0.05s, box-shadow 0.05s;
-            margin-top: 20px;
+            margin-top: 30px;
             touch-action: manipulation;
-            border: 4px solid rgba(255,255,255,0.05);
         }
 
         .miner-btn:active {
-            transform: scale(0.92);
-            box-shadow: 0 10px 20px rgba(10, 132, 255, 0.4);
+            transform: scale(0.94);
+            box-shadow: 0 8px 20px rgba(31, 97, 141, 0.3);
         }
 
         .card {
             width: 100%;
             background: var(--card-bg);
-            padding: 22px;
+            padding: 20px;
             border-radius: var(--radius-card);
-            margin-bottom: 16px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .upgrade-row {
@@ -202,16 +200,16 @@
             background: rgba(10, 132, 255, 0.15);
             color: var(--accent-color);
             border: none;
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .btn-upgrade:active {
             background: var(--accent-color);
-            color: #fff;
+            color: white;
         }
 
         .btn-action {
@@ -219,10 +217,10 @@
             background: var(--accent-color);
             color: white;
             border: none;
-            padding: 16px;
-            border-radius: 16px;
+            padding: 14px;
+            border-radius: 14px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: bold;
             margin-top: 15px;
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
@@ -234,18 +232,19 @@
         }
 
         .display-box {
-            background: #000000;
-            padding: 16px;
-            border-radius: 14px;
+            background: #050507;
+            padding: 15px;
+            border-radius: 10px;
             font-family: "SF Mono", monospace;
             font-size: 13px;
             color: var(--success-color);
+            text-align: center;
             word-break: break-all;
             margin-top: 15px;
-            border: 1px solid rgba(48, 209, 88, 0.2);
+            border: 1px dashed rgba(52, 199, 89, 0.3);
         }
 
-        /* MAH Nodes Auto Mine Grid */
+        /* Auto Mine Specific Styles */
         .mah-node {
             display: flex;
             align-items: center;
@@ -270,16 +269,16 @@
             position: fixed;
             color: #ffffff;
             font-weight: 900;
-            font-size: 32px;
+            font-size: 30px;
             pointer-events: none;
-            animation: floatUpEffect 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: floatUpEffect 0.6s ease-out forwards;
             z-index: 9999;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.6);
         }
 
         @keyframes floatUpEffect {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-160px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-140px) scale(1.2); }
         }
     </style>
 </head>
@@ -291,12 +290,12 @@
     <div id="tab-home" class="page active">
         <div class="header-bar">
             <div>
-                <span style="color: var(--text-secondary); font-size: 12px; font-weight: 500;">Telegram Node:</span><br>
-                <strong id="home-username" style="font-size: 18px;">Authenticating...</strong>
+                <span style="color: var(--text-secondary); font-size: 11px;">Mainer Account:</span><br>
+                <strong id="home-username">Authenticating...</strong>
             </div>
             <div style="text-align: right;">
-                <span style="color: var(--accent-color); font-weight: 700; font-size: 16px;" id="home-level">LVL: 1</span><br>
-                <span style="font-size: 12px; color: var(--text-secondary);">Tap Multiplier: +<span id="home-power">1</span></span>
+                <span style="color: var(--accent-color); font-weight: bold;" id="home-level">LVL: 1</span><br>
+                <span style="font-size: 11px; color: var(--text-secondary);">Tap Multiplier: +<span id="home-power">1</span></span>
             </div>
         </div>
 
@@ -315,59 +314,37 @@
             <div class="upgrade-row">
                 <div>
                     <h4>Processor (CPU)</h4>
-                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-cpu">0</span> (+1 Power)</span>
+                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-cpu">0</span> (+1 Power)</span>
                 </div>
                 <button class="btn-upgrade" onclick="purchaseHardware('cpu')"><span id="cost-cpu">50</span> 🪙</button>
             </div>
             <div class="upgrade-row">
                 <div>
                     <h4>Graphics (GPU)</h4>
-                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-gpu">0</span> (+1 Power)</span>
+                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-gpu">0</span> (+1 Power)</span>
                 </div>
                 <button class="btn-upgrade" onclick="purchaseHardware('gpu')"><span id="cost-gpu">100</span> 🪙</button>
             </div>
             <div class="upgrade-row">
                 <div>
                     <h4>Memory (RAM)</h4>
-                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-ram">0</span> (+1 Power)</span>
+                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-ram">0</span> (+1 Power)</span>
                 </div>
                 <button class="btn-upgrade" onclick="purchaseHardware('ram')"><span id="cost-ram">150</span> 🪙</button>
             </div>
         </div>
     </div>
 
-    <!-- 3. COMPATI PAGE -->
-    <div id="tab-friend" class="page">
-        <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Compati Portal</h2>
-        
-        <div class="card" style="border: 1px solid rgba(10, 132, 255, 0.3);">
-            <h4>Join Official Crypto Channel</h4>
-            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 6px;">Subscribe to claim an automated verification reward of <strong style="color: var(--success-color);">+12,000 🪙</strong></p>
-            <button id="btn-join-channel" class="btn-action" onclick="handleJoinChannel()">
-                📢 Join Channel
-            </button>
-        </div>
-
-        <div class="card">
-            <h4>Network Referral Ecosystem</h4>
-            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 6px;">Generate an off-chain network bonus of <strong style="color: var(--success-color);">+2,000 points</strong> per nodelink invitation.</p>
-            <div class="display-box" id="share-link" style="color: var(--accent-color); border-color: rgba(10, 132, 255, 0.3);">
-                Syncing Telegram Link Node...
-            </div>
-            <button class="btn-action" style="background: #2c2c2e; color: #fff;" onclick="copyReferralLink()">Copy Invitation Node</button>
-        </div>
-    </div>
-
-    <!-- 4. AUTO MINE PAGE (NEW) -->
+    <!-- 3. AUTO MINE PAGE (NEW) -->
     <div id="tab-auto" class="page">
         <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Auto Mine Engine</h2>
         <div class="card">
-            <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">Active MAH Scripts & Mining Modules:</p>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">Active MAH Scripts & Mining Modules:</p>
             
             <div class="mah-node">
                 <div>
                     <strong>mah_game.py</strong>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Core Database Sync</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Core Database Sync Module</div>
                 </div>
                 <span class="mah-status">Running</span>
             </div>
@@ -383,12 +360,34 @@
             <div class="mah-node" style="border-left-color: #ff9f0a;">
                 <div>
                     <strong>mah_engine.py</strong>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Hash Processor</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Hash Processor Node</div>
                 </div>
                 <span class="mah-status" style="background: rgba(255, 159, 10, 0.2); color: #ff9f0a;">Standby</span>
             </div>
 
-            <button class="btn-action" id="btn-auto-mine" onclick="toggleAutoMine()">⚡ Boost Auto Mine</button>
+            <button class="btn-action" id="btn-auto-mine" onclick="toggleAutoMine()" style="margin-top: 20px;">⚡ Enable Auto Mine</button>
+        </div>
+    </div>
+
+    <!-- 4. COMPATI PAGE -->
+    <div id="tab-friend" class="page">
+        <h2 style="margin-bottom: 15px; font-weight: 800; align-self: flex-start;">Compati Portal</h2>
+        
+        <div class="card" style="border: 1px solid rgba(0, 122, 255, 0.3);">
+            <h4>Join Official Crypto Channel</h4>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Subscribe to claim an automated verification reward of <strong style="color: var(--success-color);">+12,000 🪙</strong></p>
+            <button id="btn-join-channel" class="btn-action" style="background: linear-gradient(135deg, #229ed9, #0088cc);" onclick="handleJoinChannel()">
+                📢 Join Channel
+            </button>
+        </div>
+
+        <div class="card">
+            <h4>Network Referral Ecosystem</h4>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Generate an off-chain network bonus of <strong style="color: var(--success-color);">+2,000 points</strong> per nodelink invitation.</p>
+            <div class="display-box" id="share-link" style="color: var(--accent-color); border-color: rgba(0, 122, 255, 0.3);">
+                Syncing Telegram Link Node...
+            </div>
+            <button class="btn-action" onclick="copyReferralLink()">Copy Invitation Node</button>
         </div>
     </div>
 
@@ -396,13 +395,13 @@
     <div id="tab-profile" class="page">
         <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Cryptographic Profile</h2>
         
-        <!-- Telegram Native Identity Card -->
-        <div class="card" style="background: linear-gradient(145deg, #1c1c1e, #2c2c2e); position: relative; overflow: hidden;">
+        <!-- TELEGRAM PRIORITY NODE -->
+        <div class="card" style="background: linear-gradient(145deg, #1c1c1e, #2c2c2e); position: relative; overflow: hidden; border: 1px solid var(--accent-color);">
             <div style="position: absolute; top: -20px; right: -20px; font-size: 100px; opacity: 0.05;">👤</div>
             <h3 style="color: var(--accent-color); margin-bottom: 15px;">✓ Telegram Secured Node</h3>
             
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
-                <span style="color: var(--text-secondary);">Account Name:</span>
+                <span style="color: var(--text-secondary);">Node Identity:</span>
                 <strong id="prof-name">Guest Node</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
@@ -415,18 +414,18 @@
             </div>
         </div>
 
-        <!-- TON Wallet Keep for Web3 Completeness -->
-        <div class="card">
-            <h3 style="text-align: center; color: var(--text-color); margin-bottom: 15px; font-size: 15px;">Optional: Web3 TON Connect</h3>
+        <!-- TON WALLET (Optional) -->
+        <div class="card" style="border: 1px solid rgba(52, 199, 89, 0.3);">
+            <h3 style="text-align: center; color: var(--success-color); margin-bottom: 15px; font-size: 14px;">TON Web3 Native Protocol (Optional)</h3>
             <div id="connect-wallet-btn" style="display: flex; justify-content: center;"></div>
             <div id="wallet-info-section" style="display: none; margin-top: 15px;">
-                <p style="font-size: 12px; text-align: center; color: var(--text-secondary);">Authenticated On-Chain Address:</p>
-                <div class="display-box" id="wallet-address-string" style="font-size: 11px;">Null</div>
+                <p style="font-size: 12px; text-align: center; color: var(--text-secondary);">Authenticated On-Chain Public Address:</p>
+                <div class="display-box" id="wallet-address-string">Null Secure Connection</div>
             </div>
         </div>
     </div>
 
-    <!-- APPLE-STYLE BOTTOM DOCK BAR -->
+    <!-- APPLE-STYLE BOTTOM NAVIGATION (5 BUTTONS) -->
     <div class="tab-bar-container">
         <div class="tab-item active" onclick="switchTabs('tab-home', this)">
             <div class="tab-icon">🏠</div>
@@ -438,11 +437,11 @@
         </div>
         <div class="tab-item" onclick="switchTabs('tab-auto', this)">
             <div class="tab-icon">⚙️</div>
-            <div>Auto</div>
+            <div>Auto Mine</div>
         </div>
         <div class="tab-item" onclick="switchTabs('tab-friend', this)">
             <div class="tab-icon">💎</div>
-            <div>Friends</div>
+            <div>Compati</div>
         </div>
         <div class="tab-item" onclick="switchTabs('tab-profile', this)">
             <div class="tab-icon">👤</div>
@@ -452,14 +451,14 @@
 
     <script>
         // -------------------------------------------------------------
-        // HARDENED SECURITY SHIELD 
+        // HARDENED SECURITY SHIELD (Anti-Exploit & Anti-F12 Bypass)
         // -------------------------------------------------------------
         function triggerLockdown() {
             document.getElementById('cheat-overlay').style.display = 'flex';
             document.body.innerHTML = document.getElementById('cheat-overlay').outerHTML;
             localStorage.clear();
             sessionStorage.clear();
-            throw new Error("Application Halted.");
+            throw new Error("Application Context Halted by Cryptographic Integrity Shield.");
         }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
@@ -484,7 +483,7 @@
             first_name: "Local Node"
         };
 
-        const CRYPTO_STORAGE_IV = btoa(`mainer_secure_v4_${rawUser.id}`);
+        const CRYPTO_STORAGE_IV = btoa(`mainer_secure_v5_${rawUser.id}`);
 
         let state = {
             balance: 0,
@@ -493,7 +492,7 @@
             walletConnected: false,
             walletAddress: "",
             joinedChannel: false,
-            autoMineBoosted: false,
+            autoMineActive: false,
             upgrades: {
                 cpu: { level: 0, baseCost: 50 },
                 gpu: { level: 0, baseCost: 100 },
@@ -535,7 +534,7 @@
         }
 
         function updateDOM() {
-            // Number formatting for nice display
+            // Numbers formatted to locale string for beauty (1,000 instead of 1000)
             document.getElementById('balance-display').innerText = Math.floor(state.balance).toLocaleString('en-US');
             document.getElementById('home-username').innerText = rawUser.first_name;
             document.getElementById('home-power').innerText = state.clickPower;
@@ -550,7 +549,7 @@
             document.getElementById('lvl-ram').innerText = state.upgrades.ram.level;
             document.getElementById('cost-ram').innerText = getHardwareCost('ram').toLocaleString('en-US');
 
-            // Profile Data (Sync with Telegram & Clicks)
+            // Updating Telegram Profile info & Clicks securely
             document.getElementById('prof-name').innerText = rawUser.first_name;
             document.getElementById('prof-id').innerText = rawUser.id;
             document.getElementById('prof-clicks').innerText = state.totalClicks.toLocaleString('en-US');
@@ -559,15 +558,16 @@
 
             const channelBtn = document.getElementById('btn-join-channel');
             if (state.joinedChannel) {
-                channelBtn.innerText = "Verified Task ✓ (+12,000)";
-                channelBtn.style.background = "rgba(48, 209, 88, 0.1)";
+                channelBtn.innerText = "Verified Task ✓ (+12,000 Verified)";
+                channelBtn.style.background = "#1a1a1c";
                 channelBtn.style.color = "var(--success-color)";
+                channelBtn.style.border = "1px solid rgba(52, 199, 89, 0.2)";
                 channelBtn.disabled = true;
             }
 
             const autoBtn = document.getElementById('btn-auto-mine');
-            if (state.autoMineBoosted) {
-                autoBtn.innerText = "⚡ Boost Active";
+            if (state.autoMineActive) {
+                autoBtn.innerText = "⚡ Auto Mine Active";
                 autoBtn.style.background = "rgba(48, 209, 88, 0.2)";
                 autoBtn.style.color = "var(--success-color)";
             }
@@ -590,7 +590,7 @@
             lastClickTimestamp = frameTime;
 
             state.balance += state.clickPower;
-            state.totalClicks += 1;
+            state.totalClicks++;
             
             saveStateSecurely();
             updateDOM();
@@ -611,7 +611,7 @@
             floatNode.style.top = `${clientY - 25}px`;
 
             document.body.appendChild(floatNode);
-            setTimeout(() => floatNode.remove(), 700);
+            setTimeout(() => floatNode.remove(), 600);
         }
 
         function purchaseHardware(type) {
@@ -638,41 +638,42 @@
                     state.balance += 12000;
                     saveStateSecurely();
                     updateDOM();
-                    tg.showAlert("Verification Complete! +12,000 Tokens allocated.");
+                    tg.showAlert("Verification Complete! +12,000 Tokens allocated successfully.");
                 }
-            }, 3000);
+            }, 2500);
         }
 
         function copyReferralLink() {
             const nodeLink = document.getElementById('share-link').innerText;
             navigator.clipboard.writeText(nodeLink).then(() => {
-                tg.showAlert("Invitation Node Link Copied!");
+                tg.showAlert("Cryptographic Inviter Link Copied into RAM.");
             });
         }
 
+        // AUTO MINE LOGIC
         function toggleAutoMine() {
-            if(!state.autoMineBoosted) {
-                state.autoMineBoosted = true;
+            if(!state.autoMineActive) {
+                state.autoMineActive = true;
                 saveStateSecurely();
                 updateDOM();
-                tg.showAlert("Auto Mine Engine Boosted! Passive income increased.");
+                tg.showAlert("Auto Mine Engine Activated! Modules are generating passive tokens.");
             }
         }
 
-        // Passive Auto Mine Engine logic (mah_miner.py equivalent in HTML)
+        // Background Auto Mining Interval (Simulating mah_miner.py module)
         setInterval(() => {
-            let passiveIncome = (state.upgrades.cpu.level + state.upgrades.gpu.level + state.upgrades.ram.level) * 0.5;
-            if (state.autoMineBoosted) passiveIncome *= 2;
-            
-            if (passiveIncome > 0) {
+            if(state.autoMineActive) {
+                // Generates passive income based on hardware levels
+                let passiveIncome = ((state.upgrades.cpu.level + state.upgrades.gpu.level + state.upgrades.ram.level) * 0.5) + 1;
                 state.balance += passiveIncome;
                 saveStateSecurely();
-                // Update DOM only if tab-home or tab-profile is active to save resources
-                if(document.getElementById('tab-home').classList.contains('active') || document.getElementById('tab-profile').classList.contains('active')){
+                
+                // Only refresh DOM if user is looking at relevant tabs to save CPU
+                if(document.getElementById('tab-home').classList.contains('active')) {
                     updateDOM();
                 }
             }
-        }, 1000); // Adds passive balance every second
+        }, 1000); // 1 tick per second
 
         function switchTabs(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -684,6 +685,7 @@
             if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         }
 
+        // Initialize Application
         updateDOM();
     </script>
 </body>
