@@ -45,7 +45,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 120px; /* Space for the new floating Apple dock */
+            padding-bottom: 120px; 
             display: none;
             width: 100%;
             animation: fadeIn 0.3s ease-in-out;
@@ -78,7 +78,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Apple-Style Floating Tab Bar (Dock) */
         .tab-bar-container {
             position: fixed;
             bottom: 25px; 
@@ -127,7 +126,6 @@
             transform: translateY(-2px);
         }
 
-        /* Core Elements */
         .header-bar {
             width: 100%;
             display: flex;
@@ -244,7 +242,6 @@
             border: 1px dashed rgba(52, 199, 89, 0.3);
         }
 
-        /* Auto Mine Specific Styles */
         .mah-node {
             display: flex;
             align-items: center;
@@ -335,7 +332,7 @@
         </div>
     </div>
 
-    <!-- 3. AUTO MINE PAGE (NEW) -->
+    <!-- 3. AUTO MINE PAGE -->
     <div id="tab-auto" class="page">
         <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Auto Mine Engine</h2>
         <div class="card">
@@ -395,7 +392,6 @@
     <div id="tab-profile" class="page">
         <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Cryptographic Profile</h2>
         
-        <!-- TELEGRAM PRIORITY NODE -->
         <div class="card" style="background: linear-gradient(145deg, #1c1c1e, #2c2c2e); position: relative; overflow: hidden; border: 1px solid var(--accent-color);">
             <div style="position: absolute; top: -20px; right: -20px; font-size: 100px; opacity: 0.05;">👤</div>
             <h3 style="color: var(--accent-color); margin-bottom: 15px;">✓ Telegram Secured Node</h3>
@@ -414,7 +410,6 @@
             </div>
         </div>
 
-        <!-- TON WALLET (Optional) -->
         <div class="card" style="border: 1px solid rgba(52, 199, 89, 0.3);">
             <h3 style="text-align: center; color: var(--success-color); margin-bottom: 15px; font-size: 14px;">TON Web3 Native Protocol (Optional)</h3>
             <div id="connect-wallet-btn" style="display: flex; justify-content: center;"></div>
@@ -425,7 +420,7 @@
         </div>
     </div>
 
-    <!-- APPLE-STYLE BOTTOM NAVIGATION (5 BUTTONS) -->
+    <!-- APPLE-STYLE BOTTOM NAVIGATION -->
     <div class="tab-bar-container">
         <div class="tab-item active" onclick="switchTabs('tab-home', this)">
             <div class="tab-icon">🏠</div>
@@ -451,7 +446,7 @@
 
     <script>
         // -------------------------------------------------------------
-        // HARDENED SECURITY SHIELD (Anti-Exploit & Anti-F12 Bypass)
+        // HARDENED SECURITY SHIELD
         // -------------------------------------------------------------
         function triggerLockdown() {
             document.getElementById('cheat-overlay').style.display = 'flex';
@@ -469,7 +464,6 @@
         });
 
         let lastClickTimestamp = 0;
-        let anomalousClickStack = 0;
 
         // -------------------------------------------------------------
         // MINER CORE RUNTIME
@@ -534,7 +528,6 @@
         }
 
         function updateDOM() {
-            // Numbers formatted to locale string for beauty (1,000 instead of 1000)
             document.getElementById('balance-display').innerText = Math.floor(state.balance).toLocaleString('en-US');
             document.getElementById('home-username').innerText = rawUser.first_name;
             document.getElementById('home-power').innerText = state.clickPower;
@@ -549,7 +542,6 @@
             document.getElementById('lvl-ram').innerText = state.upgrades.ram.level;
             document.getElementById('cost-ram').innerText = getHardwareCost('ram').toLocaleString('en-US');
 
-            // Updating Telegram Profile info & Clicks securely
             document.getElementById('prof-name').innerText = rawUser.first_name;
             document.getElementById('prof-id').innerText = rawUser.id;
             document.getElementById('prof-clicks').innerText = state.totalClicks.toLocaleString('en-US');
@@ -577,15 +569,15 @@
             localStorage.setItem(CRYPTO_STORAGE_IV, btoa(JSON.stringify(state)));
         }
 
-        document.getElementById('target-clicker').addEventListener('click', function(event) {
-            if (!event.isTrusted) { triggerLockdown(); return; }
-
+        // 🟢 FIX: Changed 'click' to 'pointerdown' for instant mobile support without delay
+        document.getElementById('target-clicker').addEventListener('pointerdown', function(event) {
+            
             const frameTime = performance.now();
-            if (frameTime - lastClickTimestamp < 35) {
-                anomalousClickStack++;
-                if (anomalousClickStack > 4) { triggerLockdown(); return; }
-            } else {
-                anomalousClickStack = 0;
+            
+            // 🟢 FIX: Ignore duplicate triggers from multi-touch (e.g. 2 fingers hitting screen at same millisecond)
+            // Instead of blocking and locking down the user, we simply ignore the overly-fast duplicate tap.
+            if (frameTime - lastClickTimestamp < 25) {
+                return; 
             }
             lastClickTimestamp = frameTime;
 
@@ -604,8 +596,9 @@
             floatNode.className = 'click-floating-num';
             floatNode.innerText = text;
 
-            let clientX = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2;
-            let clientY = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2;
+            // Adjusted logic to perfectly capture pointerdown coordinates
+            let clientX = e.clientX || window.innerWidth/2;
+            let clientY = e.clientY || window.innerHeight/2;
 
             floatNode.style.left = `${clientX - 10}px`;
             floatNode.style.top = `${clientY - 25}px`;
@@ -660,20 +653,17 @@
             }
         }
 
-        // Background Auto Mining Interval (Simulating mah_miner.py module)
         setInterval(() => {
             if(state.autoMineActive) {
-                // Generates passive income based on hardware levels
                 let passiveIncome = ((state.upgrades.cpu.level + state.upgrades.gpu.level + state.upgrades.ram.level) * 0.5) + 1;
                 state.balance += passiveIncome;
                 saveStateSecurely();
                 
-                // Only refresh DOM if user is looking at relevant tabs to save CPU
                 if(document.getElementById('tab-home').classList.contains('active')) {
                     updateDOM();
                 }
             }
-        }, 1000); // 1 tick per second
+        }, 1000); 
 
         function switchTabs(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -685,7 +675,6 @@
             if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         }
 
-        // Initialize Application
         updateDOM();
     </script>
 </body>
