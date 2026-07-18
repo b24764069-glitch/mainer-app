@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAINER - Real Web3 Mining Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAINER - Premium iOS Web3 Client</title>
     <!-- Telegram Official WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Official TON Connect SDK for Secure Wallet Connection -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root {
-            --bg-color: #0c0c0e;
-            --card-bg: #1a1a1c;
-            --accent-color: #007aff;
-            --success-color: #34c759;
-            --text-color: #ffffff;
-            --text-secondary: #8e8e93;
+            --ios-bg: #000000;
+            --ios-secondary-bg: #1c1c1e;
+            --ios-card-bg: #2c2c2e;
+            --ios-blue: #007aff;
+            --ios-green: #34c759;
+            --ios-red: #ff3b30;
+            --ios-gray: #8e8e93;
+            --ios-text: #ffffff;
+            --ios-separator: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -28,9 +31,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -38,13 +41,32 @@
             direction: ltr;
         }
 
+        /* Anti-Cheat Screen overlay */
+        #cheat-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--ios-bg);
+            z-index: 99999;
+            color: var(--ios-red);
+            font-size: 20px;
+            font-weight: 600;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            letter-spacing: -0.5px;
+        }
+
         .page {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 110px;
+            padding-bottom: 120px;
+            padding-top: calc(20px + env(safe-area-inset-top));
             display: none;
             width: 100%;
+            animation: iosSlide 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .page.active {
@@ -53,33 +75,153 @@
             align-items: center;
         }
 
-        #cheat-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98);
-            z-index: 99999;
-            color: #ff3b30;
-            font-size: 22px;
-            font-weight: bold;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 30px;
+        @keyframes iosSlide {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
         }
 
+        /* Apple Navigation Header Style */
+        .ios-navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--ios-secondary-bg);
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            border: 0.5px solid var(--ios-separator);
+        }
+
+        .ios-title {
+            font-size: 28px;
+            font-weight: 700;
+            align-self: flex-start;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Premium Crypto Button Display */
+        .coin-balance {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -1px;
+        }
+
+        .miner-container {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .miner-btn {
+            width: 240px;
+            height: 240px;
+            background: linear-gradient(135deg, #1e272e 0%, #0f1418 100%);
+            border: 4px solid #2c3e50;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 90px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                        inset 0 4px 10px rgba(255,255,255,0.05),
+                        0 0 30px rgba(0, 122, 255, 0.15);
+            cursor: pointer;
+            transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1);
+            touch-action: manipulation;
+        }
+
+        .miner-btn:active {
+            transform: scale(0.92);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* iOS Settings/List Cards */
+        .ios-card {
+            width: 100%;
+            background: var(--ios-secondary-bg);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 0.5px solid var(--ios-separator);
+        }
+
+        .ios-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 0.5px solid var(--ios-separator);
+        }
+
+        .ios-row:last-child {
+            border-bottom: none;
+        }
+
+        /* iOS Buttons */
+        .btn-ios-pill {
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-ios-pill:active {
+            opacity: 0.8;
+        }
+
+        .btn-ios-action {
+            width: 100%;
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-ios-action:active {
+            background: #0056b3;
+        }
+
+        .ios-display-box {
+            background: #000000;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, monospace;
+            font-size: 13px;
+            color: var(--ios-green);
+            text-align: center;
+            word-break: break-all;
+            margin-top: 12px;
+            border: 0.5px solid var(--ios-separator);
+        }
+
+        /* iPhone Blur Tab Bar */
         .tab-bar {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            height: 85px;
-            background-color: rgba(26, 26, 28, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+            height: 88px;
+            background-color: rgba(28, 28, 30, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-top: 0.5px solid var(--ios-separator);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding-bottom: 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
             z-index: 1000;
         }
 
@@ -87,294 +229,191 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: var(--text-secondary);
-            font-size: 11px;
+            color: var(--ios-gray);
+            font-size: 10px;
+            font-weight: 500;
             cursor: pointer;
             flex: 1;
-            transition: color 0.2s;
+            transition: color 0.15s ease;
         }
 
         .tab-item.active {
-            color: var(--accent-color);
+            color: var(--ios-blue);
         }
 
         .tab-icon {
-            font-size: 26px;
+            font-size: 24px;
             margin-bottom: 4px;
         }
 
-        .header-bar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 15px 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .coin-balance {
-            font-size: 46px;
-            font-weight: 800;
-            margin: 25px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: -1px;
-        }
-
-        .miner-btn {
-            width: 230px;
-            height: 230px;
-            background: radial-gradient(circle, #2980b9 0%, #1f618d 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 85px;
-            box-shadow: 0 15px 35px rgba(31, 97, 141, 0.4), inset 0 -8px 15px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: transform 0.05s, box-shadow 0.05s;
-            margin-top: 30px;
-            touch-action: manipulation;
-        }
-
-        .miner-btn:active {
-            transform: scale(0.94);
-            box-shadow: 0 8px 20px rgba(31, 97, 141, 0.3);
-        }
-
-        .card {
-            width: 100%;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .upgrade-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .upgrade-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .btn-upgrade {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-upgrade:active {
-            opacity: 0.8;
-        }
-
-        .btn-action {
-            width: 100%;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .display-box {
-            background: #050507;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 13px;
-            color: var(--success-color);
-            text-align: center;
-            word-break: break-all;
-            margin-top: 15px;
-            border: 1px dashed rgba(52, 199, 89, 0.3);
-        }
-
-        .click-floating-num {
+        /* Floating +X Numbers */
+        .click-float {
             position: fixed;
             color: #ffffff;
-            font-weight: 900;
-            font-size: 30px;
+            font-weight: 700;
+            font-size: 28px;
             pointer-events: none;
-            animation: floatUpEffect 0.6s ease-out forwards;
+            animation: iosFloat 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
             z-index: 9999;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
         }
 
-        @keyframes floatUpEffect {
+        @keyframes iosFloat {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-140px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.1); }
         }
     </style>
 </head>
 <body>
 
-    <div id="cheat-overlay">⚠️ CRYPTO GUARD INTEGRITY LOCKDOWN<br><span style="font-size: 14px; color: #8e8e93; margin-top: 10px; display: block;">Execution halted due to unauthorized manipulation or inspection tools.</span></div>
+    <div id="cheat-overlay">⚠️ Security Lockdown<br><span style="font-size: 14px; color: var(--ios-gray); margin-top: 8px; display: block;">Device environment integrity check failed.</span></div>
 
     <!-- HOME PAGE -->
     <div id="tab-home" class="page active">
-        <div class="header-bar">
+        <div class="ios-navbar">
             <div>
-                <span style="color: var(--text-secondary); font-size: 11px;">Mainer Account:</span><br>
-                <strong id="home-username">Authenticating...</strong>
+                <span style="color: var(--ios-gray); font-size: 11px; text-transform: uppercase;">Miner Client</span><br>
+                <strong id="home-username" style="font-size: 16px;">Connecting...</strong>
             </div>
             <div style="text-align: right;">
-                <span style="color: var(--accent-color); font-weight: bold;" id="home-level">LVL: 1</span><br>
-                <span style="font-size: 11px; color: var(--text-secondary);">Tap Multiplier: +<span id="home-power">1</span></span>
+                <span style="color: var(--ios-blue); font-weight: 600;" id="home-level">LVL: 1</span><br>
+                <span style="font-size: 12px; color: var(--ios-gray);">Multi: +<span id="home-power">1</span></span>
             </div>
         </div>
 
         <div class="coin-balance">
             <span id="balance-display">0</span>
-            <span>🪙</span>
+            <span style="font-size: 38px;">🪙</span>
         </div>
 
-        <div class="miner-btn" id="target-clicker">⛏️</div>
+        <div class="miner-container">
+            <div class="miner-btn" id="target-clicker">⛏️</div>
+        </div>
     </div>
 
-    <!-- LEVEL UPGRADES PAGE -->
+    <!-- UPGRADES PAGE -->
     <div id="tab-level" class="page">
-        <h2 style="margin-bottom: 20px; font-weight: 800;">Hardware Upgrades</h2>
-        <div class="card">
-            <div class="upgrade-row">
+        <h1 class="ios-title">Upgrades</h1>
+        <div class="ios-card">
+            <div class="ios-row">
                 <div>
-                    <h4>Processor (CPU)</h4>
-                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-cpu">0</span> (+1 Power)</span>
+                    <h4 style="font-size: 17px; font-weight: 600;">Central Processor (CPU)</h4>
+                    <span style="font-size: 13px; color: var(--ios-gray);">Level: <span id="lvl-cpu">0</span> (+1 Power)</span>
                 </div>
-                <button class="btn-upgrade" onclick="purchaseHardware('cpu')"><span id="cost-cpu">50</span> 🪙</button>
+                <button class="btn-ios-pill" onclick="triggerHardwarePurchase('cpu')"><span id="cost-cpu">50</span> 🪙</button>
             </div>
-            <div class="upgrade-row">
+            <div class="ios-row">
                 <div>
-                    <h4>Graphics (GPU)</h4>
-                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-gpu">0</span> (+1 Power)</span>
+                    <h4 style="font-size: 17px; font-weight: 600;">Graphics Engine (GPU)</h4>
+                    <span style="font-size: 13px; color: var(--ios-gray);">Level: <span id="lvl-gpu">0</span> (+1 Power)</span>
                 </div>
-                <button class="btn-upgrade" onclick="purchaseHardware('gpu')"><span id="cost-gpu">100</span> 🪙</button>
+                <button class="btn-ios-pill" onclick="triggerHardwarePurchase('gpu')"><span id="cost-gpu">100</span> 🪙</button>
             </div>
-            <div class="upgrade-row">
+            <div class="ios-row">
                 <div>
-                    <h4>Memory (RAM)</h4>
-                    <span style="font-size: 12px; color: var(--text-secondary);">Level: <span id="lvl-ram">0</span> (+1 Power)</span>
+                    <h4 style="font-size: 17px; font-weight: 600;">System Memory (RAM)</h4>
+                    <span style="font-size: 13px; color: var(--ios-gray);">Level: <span id="lvl-ram">0</span> (+1 Power)</span>
                 </div>
-                <button class="btn-upgrade" onclick="purchaseHardware('ram')"><span id="cost-ram">150</span> 🪙</button>
+                <button class="btn-ios-pill" onclick="triggerHardwarePurchase('ram')"><span id="cost-ram">150</span> 🪙</button>
             </div>
         </div>
     </div>
 
     <!-- COMPATI PAGE -->
     <div id="tab-friend" class="page">
-        <h2 style="margin-bottom: 15px; font-weight: 800;">Compati Portal</h2>
+        <h1 class="ios-title">Compati Portal</h1>
         
-        <!-- Channel Task Card -->
-        <div class="card" style="border: 1px solid rgba(0, 122, 255, 0.3);">
-            <h4>Join Official Crypto Channel</h4>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Subscribe to claim an automated verification reward of <strong style="color: var(--success-color);">+12,000 🪙</strong></p>
-            <button id="btn-join-channel" class="btn-action" style="background: linear-gradient(135deg, #229ed9, #0088cc);" onclick="handleJoinChannel()">
-                📢 Join Channel
-            </button>
+        <!-- Task Node -->
+        <div class="ios-card" style="border: 0.5px solid rgba(0, 122, 255, 0.4);">
+            <div style="padding: 16px;">
+                <h4 style="font-size: 17px; font-weight: 600;">Join Official Crypto Channel</h4>
+                <p style="font-size: 13px; color: var(--ios-gray); margin-top: 4px;">Subscribe to claim an automated verification reward of <strong style="color: var(--ios-green);">+12,000 🪙</strong></p>
+                <button id="btn-join-channel" class="btn-ios-action" style="background: linear-gradient(135deg, #229ed9, #0088cc);" onclick="handleJoinChannel()">
+                    📢 Join Channel
+                </button>
+            </div>
         </div>
 
-        <!-- Referral Card -->
-        <div class="card">
-            <h4>Network Referral Ecosystem</h4>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Generate an off-chain network bonus of <strong style="color: var(--success-color);">+2,000 points</strong> per nodelink invitation.</p>
-            <div class="display-box" id="share-link" style="color: var(--accent-color); border-color: rgba(0, 122, 255, 0.3);">
-                Syncing Telegram Link Node...
+        <!-- Referral Node -->
+        <div class="ios-card">
+            <div style="padding: 16px;">
+                <h4 style="font-size: 17px; font-weight: 600;">Network Referral Ecosystem</h4>
+                <p style="font-size: 13px; color: var(--ios-gray); margin-top: 4px;">Generate an off-chain network bonus of <strong style="color: var(--ios-green);">+2,000 points</strong> per nodelink invitation.</p>
+                <div class="ios-display-box" id="share-link" style="color: var(--ios-blue); background: #000000;">
+                    Syncing Telegram Link Node...
+                </div>
+                <button class="btn-ios-action" onclick="copyReferralLink()">Copy Invitation Node</button>
             </div>
-            <button class="btn-action" onclick="copyReferralLink()">Copy Invitation Node</button>
         </div>
     </div>
 
     <!-- PROFILE PAGE -->
     <div id="tab-profile" class="page">
-        <h2 style="margin-bottom: 20px; font-weight: 800;">Cryptographic Profile</h2>
+        <h1 class="ios-title">Profile</h1>
         
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-secondary);">Node Identity:</span>
+        <div class="ios-card">
+            <div class="ios-row">
+                <span style="color: var(--ios-gray);">Node Identity:</span>
                 <strong id="prof-name">Guest Node</strong>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-secondary);">Telegram UID:</span>
+            <div class="ios-row">
+                <span style="color: var(--ios-gray);">Telegram UID:</span>
                 <strong id="prof-id">000000000</strong>
             </div>
-            <div style="display: flex; justify-content: space-between;">
-                <span style="color: var(--text-secondary);">Verified Hashes Mined:</span>
+            <div class="ios-row">
+                <span style="color: var(--ios-gray);">Verified Hashes Mined:</span>
                 <strong id="prof-clicks">0</strong>
             </div>
         </div>
 
-        <div class="card" style="border: 1px solid rgba(52, 199, 89, 0.3);">
-            <h3 style="text-align: center; color: var(--success-color); margin-bottom: 15px;">TON Web3 Native Protocol</h3>
-            
-            <div id="connect-wallet-btn" style="display: flex; justify-content: center;"></div>
-            
-            <div id="wallet-info-section" style="display: none; margin-top: 15px;">
-                <p style="font-size: 12px; text-align: center; color: var(--text-secondary);">Authenticated On-Chain Public Address:</p>
-                <div class="display-box" id="wallet-address-string">Null Secure Connection</div>
+        <div class="ios-card" style="border: 0.5px solid rgba(52, 199, 89, 0.4);">
+            <div style="padding: 16px;">
+                <h3 style="text-align: center; color: var(--ios-green); margin-bottom: 15px; font-size: 18px; font-weight: 700;">TON Web3 Native Protocol</h3>
+                
+                <div id="connect-wallet-btn" style="display: flex; justify-content: center;"></div>
+                
+                <div id="wallet-info-section" style="display: none; margin-top: 15px;">
+                    <p style="font-size: 12px; text-align: center; color: var(--ios-gray);">Authenticated On-Chain Public Address:</p>
+                    <div class="ios-display-box" id="wallet-address-string">Null Secure Connection</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAV BAR -->
+    <!-- BOTTOM NAV BAR (iOS Style Layout) -->
     <div class="tab-bar">
-        <div class="tab-bar">
-            <div class="tab-item active" onclick="switchTabs('tab-home', this)">
-                <div class="tab-icon">🏠</div>
-                <div>Home</div>
-            </div>
-            <div class="tab-item" onclick="switchTabs('tab-level', this)">
-                <div class="tab-icon">🚀</div>
-                <div>Level</div>
-            </div>
-            <div class="tab-item" onclick="switchTabs('tab-friend', this)">
-                <div class="tab-icon">💎</div>
-                <div>Compati</div>
-            </div>
-            <div class="tab-item" onclick="switchTabs('tab-profile', this)">
-                <div class="tab-icon">👤</div>
-                <div>Profile</div>
-            </div>
+        <div class="tab-item active" onclick="switchTabs('tab-home', this)">
+            <div class="tab-icon">🏠</div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item" onclick="switchTabs('tab-level', this)">
+            <div class="tab-icon">🚀</div>
+            <div>Level</div>
+        </div>
+        <div class="tab-item" onclick="switchTabs('tab-friend', this)">
+            <div class="tab-icon">💎</div>
+            <div>Compati</div>
+        </div>
+        <div class="tab-item" onclick="switchTabs('tab-profile', this)">
+            <div class="tab-icon">👤</div>
+            <div>Profile</div>
         </div>
     </div>
 
     <script>
         // -------------------------------------------------------------
-        // HARDENED SECURITY SHIELD (Anti-Exploit & Anti-F12 Bypass)
+        // HARDENED SECURITY SHIELD (Anti-Exploit Engine)
         // -------------------------------------------------------------
         function triggerLockdown() {
             document.getElementById('cheat-overlay').style.display = 'flex';
             document.body.innerHTML = document.getElementById('cheat-overlay').outerHTML;
             localStorage.clear();
             sessionStorage.clear();
-            throw new Error("Application Context Halted by Cryptographic Integrity Shield.");
+            throw new Error("Integrity Lockdown Active.");
         }
 
-        // Context Lock
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        // Dynamic System Hotkey Blocker
         document.addEventListener('keydown', e => {
             if (e.keyCode === 123 || 
                 (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
@@ -384,12 +423,11 @@
             }
         });
 
-        // Advanced Autoclicker Hardware Event Guard
         let lastClickTimestamp = 0;
         let anomalousClickStack = 0;
 
         // -------------------------------------------------------------
-        // MINER CORE RUNTIME
+        // RUNTIME STATE & TELEGRAM INITIALIZATION
         // -------------------------------------------------------------
         const tg = window.Telegram.WebApp;
         tg.ready();
@@ -402,7 +440,6 @@
 
         const CRYPTO_STORAGE_IV = btoa(`mainer_secure_v3_${rawUser.id}`);
 
-        // Safe Default Memory State
         let state = {
             balance: 0,
             clickPower: 1,
@@ -417,7 +454,6 @@
             }
         };
 
-        // Obfuscated Memory De-serialization
         if (localStorage.getItem(CRYPTO_STORAGE_IV)) {
             try {
                 state = JSON.parse(atob(localStorage.getItem(CRYPTO_STORAGE_IV)));
@@ -426,7 +462,7 @@
             }
         }
 
-        // Web3 Net Token Connection Engine
+        // Web3 Connection Engine
         const tonConnectUI = new TONConnectUI.TonConnectUI({
             manifestUrl: 'https://raw.githubusercontent.com/ton-community/tonconnect-manifest/main/tonconnect-manifest.json',
             buttonRootId: 'connect-wallet-btn'
@@ -456,7 +492,6 @@
             document.getElementById('home-username').innerText = rawUser.first_name;
             document.getElementById('home-power').innerText = state.clickPower;
 
-            // Accurate Level Calibration Algorithm
             let totalUpgradesGained = state.upgrades.cpu.level + state.upgrades.gpu.level + state.upgrades.ram.level;
             let finalCalculatedLvl = Math.floor(totalUpgradesGained / 2) + 1;
             document.getElementById('home-level').innerText = `LVL: ${finalCalculatedLvl}`;
@@ -472,15 +507,14 @@
             document.getElementById('prof-id').innerText = rawUser.id;
             document.getElementById('prof-clicks').innerText = state.totalClicks;
 
-            // Strict Dynamic Node URL Enforcement
             document.getElementById('share-link').innerText = `https://t.me/MAINER_FBOT_bot/${rawUser.id}`;
 
             const channelBtn = document.getElementById('btn-join-channel');
             if (state.joinedChannel) {
                 channelBtn.innerText = "Verified Task ✓ (+12,000 Verified)";
-                channelBtn.style.background = "#1a1a1c";
-                channelBtn.style.color = "var(--success-color)";
-                channelBtn.style.border = "1px solid rgba(52, 199, 89, 0.2)";
+                channelBtn.style.background = "#1c1c1e";
+                channelBtn.style.color = "var(--ios-green)";
+                channelBtn.style.border = "0.5px solid rgba(52, 199, 89, 0.2)";
                 channelBtn.disabled = true;
             }
         }
@@ -489,9 +523,8 @@
             localStorage.setItem(CRYPTO_STORAGE_IV, btoa(JSON.stringify(state)));
         }
 
-        // Hardened Event Processing for Tapping
+        // Tapping Mechanics with iOS Floating Animations
         document.getElementById('target-clicker').addEventListener('click', function(event) {
-            // Anti-Bot Tap Tracking Validation
             if (!event.isTrusted) {
                 triggerLockdown();
                 return;
@@ -511,7 +544,6 @@
             }
             lastClickTimestamp = frameTime;
 
-            // Processing Score Allocation
             state.balance += state.clickPower;
             state.totalClicks++;
             
@@ -524,7 +556,7 @@
 
         function renderFloatScore(e, text) {
             const floatNode = document.createElement('div');
-            floatNode.className = 'click-floating-num';
+            floatNode.className = 'click-float';
             floatNode.innerText = text;
 
             let clientX = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2;
@@ -537,7 +569,7 @@
             setTimeout(() => floatNode.remove(), 600);
         }
 
-        function purchaseHardware(type) {
+        function triggerHardwarePurchase(type) {
             let cost = getHardwareCost(type);
             if (state.balance >= cost) {
                 state.balance -= cost;
@@ -556,7 +588,6 @@
         function handleJoinChannel() {
             tg.openTelegramLink('https://t.me/MAINER_tbot');
             
-            // Safe Native State Acknowledgment Delay
             setTimeout(() => {
                 if (!state.joinedChannel) {
                     state.joinedChannel = true;
@@ -571,7 +602,7 @@
         function copyReferralLink() {
             const nodeLink = document.getElementById('share-link').innerText;
             navigator.clipboard.writeText(nodeLink).then(() => {
-                alert("Cryptographic Inviter Link Copied into RAM.");
+                alert("Cryptographic Inviter Link Copied.");
             });
         }
 
@@ -583,8 +614,8 @@
             element.classList.add('active');
         }
 
-        // Initialize Native Core Interface
+        // Initialize Native Client
         updateDOM();
     </script>
 </body>
-</html>
+</html> 
