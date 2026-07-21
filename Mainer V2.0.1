@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Advanced | Telegram Crypto Mini App</title>
+    <!-- Telegram Official WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Official TON Connect SDK -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <style>
+        /* Color variables and modern Apple/Telegram style */
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --accent-color: #0a84ff;
+            --success-color: #30d158;
+            --text-color: #ffffff;
+            --text-secondary: #8e8e93;
+            --radius-main: 24px;
+            --radius-card: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 120px;
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bottom navbar (Tab bar) */
+        .tab-bar-container {
+            position: fixed;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            height: 75px;
+            background-color: rgba(28, 28, 30, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s;
+            border-radius: 20px;
+            padding: 8px 0;
+        }
+
+        .tab-item.active {
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .card {
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius-card);
+            margin-bottom: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .coin-balance {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* GPU Auto Mining card style on Home */
+        .gpu-mining-card {
+            background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
+            border: 2px solid var(--accent-color);
+            text-align: center;
+            padding: 30px;
+            border-radius: var(--radius-main);
+            width: 100%;
+            max-width: 350px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(10, 132, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gpu-mining-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(10,132,255,0.1) 0%, transparent 70%);
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .gpu-image {
+            width: 120px;
+            height: 120px;
+            background: url('https://cdn-icons-png.flaticon.com/512/900/900350.png') center/contain no-repeat;
+            margin: 0 auto 15px;
+            filter: drop-shadow(0 0 15px rgba(10, 132, 255, 0.5));
+            animation: pulseGpu 2s infinite ease-in-out;
+            position: relative;
+        }
+
+        @keyframes pulseGpu {
+            0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(10, 132, 255, 0.5)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(10, 132, 255, 0.8)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(10, 132, 255, 0.5)); }
+        }
+
+        .btn-action {
+            width: 100%;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-action:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        /* Profile fields */
+        .profile-field-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .profile-field-group label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .profile-field-group input {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .profile-field-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .info-row span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .upgrade-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-upgrade {
+            background: rgba(10, 132, 255, 0.15);
+            color: var(--accent-color);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tab 1: Home & GPU Auto Mining -->
+    <div id="tab-home" class="page active">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span style="color: var(--text-secondary); font-size: 12px;">Dear User:</span><br>
+                <strong id="home-username" style="font-size: 18px;">Loading...</strong>
+            </div>
+            <div style="text-align: right;">
+                <span style="color: var(--success-color); font-weight: bold; font-size: 18px;" id="active-coin-symbol">COIN</span>
+            </div>
+        </div>
+
+        <div class="coin-balance">
+            <span id="balance-display">0</span>
+            <span id="coin-symbol-display">🪙</span>
+        </div>
+
+        <!-- Auto Mining section with GPU image -->
+        <div class="gpu-mining-card">
+            <div class="gpu-image"></div>
+            <h3 style="margin-bottom: 8px; position: relative; z-index: 2;">Auto Mining</h3>
+            <p id="mining-status-text" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; position: relative; z-index: 2;">Status: Stopped</p>
+            <button class="btn-action" id="toggle-mining-btn" onclick="toggleAutoMining()">Start Auto Mining ⚡</button>
+        </div>
+    </div>
+
+    <!-- Tab 2: Hardware Upgrades (Level) -->
+    <div id="tab-level" class="page">
+        <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Hardware Upgrades (Mining Speed)</h2>
+        <div class="card">
+            <div class="upgrade-row">
+                <div>
+                    <h4>Processor (CPU)</h4>
+                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-cpu">0</span> (+1 Speed)</span>
+                </div>
+                <button class="btn-upgrade" onclick="purchaseHardware('cpu')"><span id="cost-cpu">50</span></button>
+            </div>
+            <div class="upgrade-row">
+                <div>
+                    <h4>Graphics Card (GPU)</h4>
+                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-gpu">0</span> (+1 Speed)</span>
+                </div>
+                <button class="btn-upgrade" onclick="purchaseHardware('gpu')"><span id="cost-gpu">100</span></button>
+            </div>
+            <div class="upgrade-row">
+                <div>
+                    <h4>RAM Memory (RAM)</h4>
+                    <span style="font-size: 13px; color: var(--text-secondary);">Level: <span id="lvl-ram">0</span> (+1 Speed)</span>
+                </div>
+                <button class="btn-upgrade" onclick="purchaseHardware('ram')"><span id="cost-ram">150</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Profile, Custom Token Creation & Wallet Connection -->
+    <div id="tab-profile" class="page">
+        <h2 style="margin-bottom: 20px; font-weight: 800; align-self: flex-start;">Profile & Advanced Settings</h2>
+        
+        <!-- Telegram Account Information -->
+        <div class="card" style="background: linear-gradient(145deg, #1c1c1e, #2c2c2e); border: 1px solid var(--accent-color);">
+            <h3 style="color: var(--accent-color); margin-bottom: 15px; font-size: 16px;">Your Telegram Account Info</h3>
+            <div class="info-row">
+                <span>User Name:</span>
+                <strong id="prof-name">-</strong>
+            </div>
+            <div class="info-row">
+                <span>Username:</span>
+                <strong id="prof-username">-</strong>
+            </div>
+            <div class="info-row" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                <span>User ID (UID):</span>
+                <strong id="prof-id" style="font-family: monospace; color: var(--success-color);">-</strong>
+            </div>
+        </div>
+
+        <!-- Custom Token Creation Section -->
+        <div class="card">
+            <h3 style="color: var(--success-color); margin-bottom: 15px; font-size: 16px;">Create Custom Cryptocurrency</h3>
+            <div class="profile-field-group">
+                <label>Full Token Name (e.g., MyCoin):</label>
+                <input type="text" id="custom-token-name" placeholder="Enter your token name..." oninput="saveCustomToken()">
+            </div>
+            <div class="profile-field-group" style="margin-bottom: 0;">
+                <label>Token Symbol/Emoji (e.g., 💎):</label>
+                <input type="text" id="custom-token-symbol" placeholder="An emoji or abbreviation..." oninput="saveCustomToken()">
+            </div>
+        </div>
+
+        <!-- Quick Wallet Connection Panel -->
+        <div class="card" style="border: 1px solid rgba(48, 209, 88, 0.4);">
+            <h3 style="text-align: center; color: var(--success-color); margin-bottom: 15px; font-size: 16px;">Quick Wallet Connection (TON Connect)</h3>
+            <div id="connect-wallet-btn" style="display: flex; justify-content: center;"></div>
+            <div id="wallet-info-box" style="display: none; margin-top: 15px; font-size: 13px; word-break: break-all; background: #000; padding: 12px; border-radius: 10px; color: var(--success-color); text-align: center; border: 1px dashed var(--success-color);"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar (Tab Bar) -->
+    <div class="tab-bar-container">
+        <div class="tab-item active" onclick="switchTab('tab-home', this)">
+            <div class="tab-icon">🏠</div>
+            <div>Home (Mining)</div>
+        </div>
+        <div class="tab-item" onclick="switchTab('tab-level', this)">
+            <div class="tab-icon">🚀</div>
+            <div>Speed Boost</div>
+        </div>
+        <div class="tab-item" onclick="switchTab('tab-profile', this)">
+            <div class="tab-icon">👤</div>
+            <div>My Profile</div>
+        </div>
+    </div>
+
+    <script>
+        // Telegram WebApp Initial SDK Setup
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Safely fetch user information from Telegram API
+        const tgUser = tg.initDataUnsafe?.user || {
+            id: 123456789,
+            first_name: "Test User",
+            username: "test_user"
+        };
+
+        // User-specific Storage Key
+        const STORAGE_KEY = `crypto_autominer_state_${tgUser.id}`;
+        
+        let state = {
+            balance: 0,
+            miningSpeed: 1,
+            isMiningActive: false,
+            tokenName: "MyCoin",
+            tokenSymbol: "🪙",
+            upgrades: {
+                cpu: { level: 0, baseCost: 50 },
+                gpu: { level: 0, baseCost: 100 },
+                ram: { level: 0, baseCost: 150 }
+            }
+        };
+
+        // Load saved state data
+        if (localStorage.getItem(STORAGE_KEY)) {
+            try {
+                let savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                state = { ...state, ...savedState };
+            } catch (e) {
+                console.error("Error loading saved data");
+            }
+        }
+
+        // Initialize Telegram user information in profile
+        document.getElementById('home-username').innerText = tgUser.first_name;
+        document.getElementById('prof-name').innerText = tgUser.first_name;
+        document.getElementById('prof-username').innerText = tgUser.username ? `@${tgUser.username}` : 'Not set';
+        document.getElementById('prof-id').innerText = tgUser.id;
+
+        // Initialize token name & symbol inputs
+        document.getElementById('custom-token-name').value = state.tokenName;
+        document.getElementById('custom-token-symbol').value = state.tokenSymbol;
+
+        // Quick TON Connect wallet initialization
+        const tonConnectUI = new TONConnectUI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/ton-community/tonconnect-manifest/main/tonconnect-manifest.json',
+            buttonRootId: 'connect-wallet-btn'
+        });
+
+        tonConnectUI.onStatusChange(wallet => {
+            const walletBox = document.getElementById('wallet-info-box');
+            if (wallet) {
+                walletBox.style.display = 'block';
+                walletBox.innerHTML = `Wallet Connected:<br><br><span style="font-family:monospace; color:#fff;">${wallet.account.address}</span>`;
+            } else {
+                walletBox.style.display = 'none';
+            }
+        });
+
+        // Calculate hardware upgrade price
+        function getCost(type) {
+            let item = state.upgrades[type];
+            return Math.floor(item.baseCost * Math.pow(1.5, item.level));
+        }
+
+        // Update UI state
+        function updateUI() {
+            // Update token name & symbol across the app
+            document.getElementById('balance-display').innerText = Math.floor(state.balance).toLocaleString('en-US');
+            document.getElementById('coin-symbol-display').innerText = state.tokenSymbol;
+            document.getElementById('active-coin-symbol').innerText = state.tokenName;
+
+            // Update prices & levels
+            document.getElementById('lvl-cpu').innerText = state.upgrades.cpu.level;
+            document.getElementById('cost-cpu').innerText = getCost('cpu').toLocaleString('en-US');
+            document.getElementById('lvl-gpu').innerText = state.upgrades.gpu.level;
+            document.getElementById('cost-gpu').innerText = getCost('gpu').toLocaleString('en-US');
+            document.getElementById('lvl-ram').innerText = state.upgrades.ram.level;
+            document.getElementById('cost-ram').innerText = getCost('ram').toLocaleString('en-US');
+
+            // Auto Mining button status
+            const miningBtn = document.getElementById('toggle-mining-btn');
+            const statusText = document.getElementById('mining-status-text');
+            const gpuImg = document.querySelector('.gpu-image');
+
+            if (state.isMiningActive) {
+                miningBtn.innerText = "Stop Mining ⏸️";
+                miningBtn.style.background = "#ff3b30";
+                statusText.innerText = "Status: Actively Mining... 🚀";
+                statusText.style.color = "var(--success-color)";
+                gpuImg.style.animationPlayState = 'running';
+            } else {
+                miningBtn.innerText = "Start Auto Mining ⚡";
+                miningBtn.style.background = "var(--accent-color)";
+                statusText.innerText = "Status: Stopped";
+                statusText.style.color = "var(--text-secondary)";
+                gpuImg.style.animationPlayState = 'paused';
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Start/Stop mining toggle button
+        function toggleAutoMining() {
+            state.isMiningActive = !state.isMiningActive;
+            saveState();
+            updateUI();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        // Auto mining core loop (runs while HTML is open)
+        setInterval(() => {
+            if (state.isMiningActive) {
+                // Calculate mining speed based on hardware levels
+                let gain = 1 + (state.upgrades.cpu.level + state.upgrades.gpu.level + state.upgrades.ram.level) * 0.5;
+                state.balance += gain;
+                saveState();
+                
+                // Only update DOM if currently on the home tab for better performance
+                if (document.getElementById('tab-home').classList.contains('active')) {
+                    document.getElementById('balance-display').innerText = Math.floor(state.balance).toLocaleString('en-US');
+                }
+            }
+        }, 1000); // Increments points every second
+
+        // Purchase hardware upgrades
+        function purchaseHardware(type) {
+            let cost = getCost(type);
+            if (state.balance >= cost) {
+                state.balance -= cost;
+                state.upgrades[type].level++;
+                saveState();
+                updateUI();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                tg.showAlert("Insufficient balance for this upgrade!");
+            }
+        }
+
+        // Save custom token name and symbol changes
+        function saveCustomToken() {
+            let newName = document.getElementById('custom-token-name').value.trim();
+            let newSymbol = document.getElementById('custom-token-symbol').value.trim();
+            
+            state.tokenName = newName ? newName : "MyCoin";
+            state.tokenSymbol = newSymbol ? newSymbol : "🪙";
+            
+            saveState();
+            updateUI();
+        }
+
+        // Tab switching function with animations
+        function switchTab(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
+            
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        // Initial setup function execution
+        updateUI();
+    </script>
+</body>
+</html>
